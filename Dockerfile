@@ -2,6 +2,7 @@ FROM ubuntu
 MAINTAINER Steven Yan
 
 ENV PIO_VERSION 0.12.0
+ENV SCALA_VERSION 2.11.8
 ENV SPARK_VERSION 2.1.1
 ENV ELASTICSEARCH_VERSION 5.5.2
 ENV HBASE_VERSION 1.2.6
@@ -30,7 +31,7 @@ RUN cd ${HOME} \
     && tar -xvzf apache-predictionio-${PIO_VERSION}-incubating.tar.gz -C ./apache-predictionio-${PIO_VERSION}-incubating \
     && rm apache-predictionio-${PIO_VERSION}-incubating.tar.gz \
     && cd apache-predictionio-${PIO_VERSION}-incubating \
-    && ./make-distribution.sh
+    && ./make-distribution.sh -Dscala.version=${SCALA_VERSION} -Dspark.version=${SPARK_VERSION} -Delasticsearch.version=${ELASTICSEARCH_VERSION}
 
 RUN sudo tar zxvf ${HOME}/apache-predictionio-${PIO_VERSION}-incubating/PredictionIO-${PIO_VERSION}-incubating.tar.gz -C / \
     && rm -r ${HOME}/apache-predictionio-${PIO_VERSION}-incubating \
@@ -72,3 +73,10 @@ COPY files/hbase-site.xml ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-
 
 RUN sed -i "s|VAR_PIO_HOME|${PIO_HOME}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml \
     && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml
+
+	
+USER root
+RUN sudo apt-get update && apt-get install -y git
+# RUN sudo sed -i "s|# export /usr/java/jdk1.6.0/|export ${JAVA_HOME}/|g" /PredictionIO-${PIO_VERSION}-incubating/vendors/hbase-${HBASE_VERSION}/conf/hbase-env.sh
+
+USER pio
