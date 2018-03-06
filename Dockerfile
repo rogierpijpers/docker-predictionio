@@ -1,5 +1,6 @@
 FROM ubuntu
-MAINTAINER Steven Yan
+MAINTAINER Rogier Pijpers
+# Forked from steveny/predictionio
 
 ENV PIO_VERSION 0.12.0
 ENV SCALA_VERSION 2.11.8
@@ -74,9 +75,7 @@ COPY files/hbase-site.xml ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-
 RUN sed -i "s|VAR_PIO_HOME|${PIO_HOME}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml \
     && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml
 
-	
-USER root
-RUN sudo apt-get update && apt-get install -y git
-# RUN sudo sed -i "s|# export /usr/java/jdk1.6.0/|export ${JAVA_HOME}/|g" /PredictionIO-${PIO_VERSION}-incubating/vendors/hbase-${HBASE_VERSION}/conf/hbase-env.sh
-
-USER pio
+# For production	
+# USER root
+# RUN sudo apt-get update && apt-get install -y git
+# USER pio
